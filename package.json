@@ -1,0 +1,38 @@
+{
+  "name": "Basic-graphql-server",
+  "version": "1.0.0",
+  "description": "GraphQl Server for ReactJS project with hot code reloading",
+  "scripts": {
+    "start": "./node_modules/.bin/supervisor server.js",
+    "lint": "eslint src"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "react",
+    "reactjs",
+    "boilerplate",
+    "hot",
+    "reload",
+    "hmr",
+    "live",
+    "edit",
+    "webpack"
+  ],
+  "author": "Neeraj Suthar",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "supervisor": "0.9.x"
+  },
+  "dependencies": {
+    "babel": "^5.4.7",
+    "express": "4.x.x",
+    "express-graphql": "0.4.x",
+    "graphql": "0.4.x",
+    "mongodb": "^2.2.16",
+    "promised-mongo": "1.x.x",
+    "underscore": "1.8.x"
+  }
+}
