@@ -89,6 +89,15 @@ const Mutation = new GraphQLObjectType({
             .then(_ => product);
         })
       }
+    },
+    removeProduct: {
+      type: new GraphQLList(Product),
+      args: {
+        id: {type: new GraphQLNonNull(GraphQLString)},
+      },
+      resolve: function(rootValue, {id}) {
+        return productsCollection.remove({id}).then(_ => productsCollection.find().toArray());
+      }
     }
   }
 });

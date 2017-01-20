@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {getProducts, removeProduct} from '../actions/products.actions.js';
-import {Link} from 'react-router';
+import {Link, browserHistory} from 'react-router';
 
 class ProductList extends React.Component {
   componentWillMount() {
@@ -13,7 +13,7 @@ class ProductList extends React.Component {
     return (
       <div>
         <h1>List of Products</h1>
-        {products.map(product => {
+        {products && products.map(product => {
           return (
             <div style={{width: "300px"}} key={product.id}>
               <div style={{width: "150px", display:"inline-block", textAlign: "left"}}>
@@ -22,14 +22,14 @@ class ProductList extends React.Component {
                 </Link>
               </div>
               <div style={{width: "150px", display:"inline-block", textAlign: "right"}}>
-                <Link to={`product/${product.id}/edit`}>
+                <button onClick={() => browserHistory.push(`/product/${product.id}/edit`)}>
                   Edit
-                </Link>
+                </button>
                 &nbsp;
                 &nbsp;
-                <a href="" onClick={() => removeProduct("mutation{removeProduct(id){id, name}}")}>
+                <button onClick={() => removeProduct(`mutation{removeProduct(id:"${product.id}"){id, name}}`)}>
                   Delete
-                </a>
+                </button>
               </div>
             </div>
           );
