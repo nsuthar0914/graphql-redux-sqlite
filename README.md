@@ -1,4 +1,4 @@
-## A GraphQL Server with React+Redux Client
+## A GraphQL Server using MongoDB with a React+Redux Client
 
 Install mongodb --- https://www.howtoforge.com/tutorial/install-mongodb-on-ubuntu-16.04/
 then -- 
