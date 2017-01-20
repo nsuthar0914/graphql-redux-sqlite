@@ -11,14 +11,14 @@ class ProductDetail extends React.Component {
   render() {
     const {product, fetching} = this.props;
     return (
-      <div>
+      <div style={{textAlign: "center"}}>
         <Link style={{float: "right"}} to="/products">Home</Link>
         <h1>{product.get("name")}</h1>
         <img height="400" width="400" src={product.get("image")} />
         <p>{product.get("description")}</p>
-        <bold>Cost</bold>: {product.get("cost")}
+        <b>Cost</b>: {product.get("cost")}
         <br />
-        <bold>Quantity</bold>: {product.get("quantity")}
+        <b>Quantity</b>: {product.get("quantity")}
         <br />
       </div>
     )

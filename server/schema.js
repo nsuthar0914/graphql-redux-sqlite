@@ -90,6 +90,22 @@ const Mutation = new GraphQLObjectType({
         })
       }
     },
+    editProduct: {
+      type: Product,
+      args: {
+        id: {type: new GraphQLNonNull(GraphQLString)},
+        name: {type: new GraphQLNonNull(GraphQLString)},
+        description: {type: GraphQLString},
+        image: {type: GraphQLString},
+        cost: {type: GraphQLInt},
+        quantity: {type: GraphQLInt}
+      },
+      resolve: function(rootValue, args) {
+        let product = Object.assign({}, args);
+        return productsCollection.update({id: product.id}, {$set: product})
+            .then(_ => product);
+      }
+    },
     removeProduct: {
       type: new GraphQLList(Product),
       args: {
