@@ -8,7 +8,7 @@ class App extends React.Component {
 
     return (
       <section id="app">
-        Testing Application 
+        {this.props.children} 
       </section>
     )
   }

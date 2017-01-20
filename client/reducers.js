@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 
+import products from './reducers/products.reducers.js';
 
 function app(state = {
 }, action) {
@@ -12,6 +13,7 @@ function app(state = {
 
 const reducers = combineReducers({
   app,
+  products
 });
 
 export default reducers;

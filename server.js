@@ -7,6 +7,7 @@ var path = require('path');
 var http = require('http');
 var fs = require('fs');
 var webpack = require('webpack');
+var cors = require('cors')
 
 global.__DEVELOPMENT__ = process.env.NODE_ENV !== 'production';
 
@@ -63,6 +64,11 @@ client.listen('4000', (err) => {
 
 
 var server = express();
+var corsOptions = {
+  origin: 'http://localhost:4000'
+}
+
+server.use(cors(corsOptions));
 
 server.use('/', expressGraphql({
   schema: Schema,

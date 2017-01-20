@@ -2,7 +2,8 @@ import React from 'react';
 import { Route, IndexRedirect, IndexRoute  } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux'  ;
 
-import App from './App.jsx';
+import App from './containers/App.jsx';
+import ProductList from './containers/ProductList.jsx';
 
 export default function (store) {
   function requireAuth(nextState, replace) {
@@ -15,6 +16,8 @@ export default function (store) {
   }
   return (
     <Route path="/" component={App}>
+      <IndexRedirect to="products"/>
+      <Route path="products" component={ProductList}/>
     </Route>
   )
 }
