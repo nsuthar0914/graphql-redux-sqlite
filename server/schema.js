@@ -71,10 +71,9 @@ const Query = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
   name: 'Mutations',
   fields: {
-    createProduct: {
+    addProduct: {
       type: Product,
       args: {
-        id: {type: new GraphQLNonNull(GraphQLString)},
         name: {type: new GraphQLNonNull(GraphQLString)},
         description: {type: GraphQLString},
         image: {type: GraphQLString},
@@ -83,8 +82,12 @@ const Mutation = new GraphQLObjectType({
       },
       resolve: function(rootValue, args) {
         let product = Object.assign({}, args);
-        return productsCollection.insert(product)
-          .then(_ => product);
+        return productsCollection.count().then(length => {
+          console.log('length', length)
+          product.id = `${length + 1}`;
+          return productsCollection.insert(product)
+            .then(_ => product);
+        })
       }
     }
   }

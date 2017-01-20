@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {getProduct} from '../actions/products.actions.js';
-import {Link} from 'react-router';
+import {getProduct, addProduct, editProduct} from '../actions/products.actions.js';
+import {Link, browserHistory} from 'react-router';
 import AddEditProductForm from '../components/AddEditProductForm.jsx';
 
 class AddEditProduct extends React.Component {
@@ -16,9 +16,26 @@ class AddEditProduct extends React.Component {
       });
     }
   }
+  addOrEdit(data){
+    const {params, addProduct, editProduct} = this.props;
+    let dataStr = `name: "${data.name}", `;
+    if (data.description) dataStr += `description: "${data.description}", `;
+    if (data.quantity) dataStr += `quantity: ${data.quantity}, `;
+    if (data.cost) dataStr += `cost: ${data.cost}, `;
+    if (data.image) dataStr += `image: "${data.image}", `;
+    if (params.id) {
+      dataStr += `, id: "${params.id}"`;
+      editProduct(`mutation{editProduct(${dataStr}){id, name}}`).then(() => {
+        browserHistory.push('/products');
+      }, (error) => console.log(error));
+    } else {
+      addProduct(`mutation{addProduct(${dataStr}){id, name}}`).then(() => {
+        browserHistory.push('/products');
+      }, (error) => console.log(error));
+    }
+  }
   render() {
     const {product, fetching, params} = this.props;
-    console.log(fetching, this.waitForData, product.get("id"));
     if (fetching || this.waitForData) {
       return null;
     }
@@ -35,7 +52,7 @@ class AddEditProduct extends React.Component {
     return (
       <div>
         <Link style={{float: "right"}} to="/products">Home</Link>
-        <AddEditProductForm.test initialValues={initialValues}/>
+        <AddEditProductForm.test addOrEdit={(data) => this.addOrEdit(data)} initialValues={initialValues}/>
       </div>
     )
   }
@@ -52,6 +69,12 @@ const mapDispatchToProps = (dispatch) => {
   return {
     getProduct: (payload) => {
       return dispatch(getProduct(payload));
+    },
+    addProduct: (payload) => {
+      return dispatch(addProduct(payload));
+    },
+    editProduct: (payload) => {
+      return dispatch(editProduct(payload));
     },
   }
 };
