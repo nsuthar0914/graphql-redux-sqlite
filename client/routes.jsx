@@ -4,6 +4,7 @@ import { syncHistoryWithStore } from 'react-router-redux'  ;
 
 import App from './containers/App.jsx';
 import ProductList from './containers/ProductList.jsx';
+import ProductDetail from './containers/ProductDetail.jsx';
 
 export default function (store) {
   function requireAuth(nextState, replace) {
@@ -18,6 +19,7 @@ export default function (store) {
     <Route path="/" component={App}>
       <IndexRedirect to="products"/>
       <Route path="products" component={ProductList}/>
+      <Route path="product/:id" component={ProductDetail}/>
     </Route>
   )
 }

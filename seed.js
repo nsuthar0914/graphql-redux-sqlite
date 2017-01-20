@@ -1,4 +1,4 @@
-require('babel/register');
+require('babel-core/register');
 var MongoClient = require('mongodb').MongoClient
   , assert = require('assert');
 var url = process.env.MONGO_CONNECTION_STRING;

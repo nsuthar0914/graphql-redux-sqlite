@@ -2,7 +2,8 @@ import Immutable from "immutable";
 
 const immutableState = Immutable.Map({
   fetching: false,
-  products: []
+  products: [],
+  product: Immutable.Map({})
 })
 
 const products = (state = immutableState, action) => {
@@ -12,6 +13,11 @@ const products = (state = immutableState, action) => {
     case "GET_PRODUCTS_FINISHED":
       return state.set("fetching", false)
              .set("products", action.response.data.products);
+    case "GET_PRODUCT_REQUEST":
+      return state.set("fetching", true);
+    case "GET_PRODUCT_FINISHED":
+      return state.set("fetching", false)
+             .set("product", Immutable.Map(action.response.data.product));
     default:
       return state
   }
