@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "GraphQl Server for ReactJS project with hot code reloading",
   "scripts": {
-    "start": "MONGO_CONNECTION_STRING='mongodb://dharma:dharma@127.0.0.1:27017/dharmataskdb' ./node_modules/.bin/supervisor server.js",
+    "start": "MONGO_CONNECTION_STRING='mongodb://gQLrdx:gQLrdx@127.0.0.1:27017/gQLrdxtaskdb' ./node_modules/.bin/supervisor server.js",
     "lint": "eslint src",
-    "seed": "MONGO_CONNECTION_STRING='mongodb://dharma:dharma@127.0.0.1:27017/dharmataskdb' node seed.js"
+    "seed": "MONGO_CONNECTION_STRING='mongodb://gQLrdx:gQLrdx@127.0.0.1:27017/gQLrdxtaskdb' node seed.js"
   },
   "repository": {
     "type": "git",

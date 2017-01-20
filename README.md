@@ -5,9 +5,9 @@ then --
 
 mongo admin -u admin -p admin123 //admin you just created or whatever existed before
 
-use dharmataskdb
+use gQLrdxtaskdb
 
-db.createUser({user:"dharma", pwd:"dharma", roles:[{role:"readWrite", db:"dharmataskdb"}]})
+db.createUser({user:"gQLrdx", pwd:"gQLrdx", roles:[{role:"readWrite", db:"gQLrdxtaskdb"}]})
 
 npm install
 
