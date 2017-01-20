@@ -14,3 +14,5 @@ npm install
 npm run seed
 
 npm start
+
+//server runs at localhost:3000 and client runs at localhost:4000
