@@ -67,21 +67,6 @@ const Product = new GraphQLObjectType({
 const Query = new GraphQLObjectType({
   name: 'RootQuery',
   fields: {
-    login: {
-      type: TokenResponse,
-      args: {
-        email: {type: GraphQLString}, 
-      },
-      resolve: function(rootValue, args, info) {
-        const token = jwt.sign({
-          email: args.email
-        }, jwtSecret);
-        return {
-          email: args.email,
-          token
-        };
-      }
-    },
     products: {
       type: new GraphQLList(Product),
       resolve: function(rootValue, args, info) {
@@ -109,6 +94,21 @@ const Query = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
   name: 'Mutations',
   fields: {
+    login: {
+      type: TokenResponse,
+      args: {
+        email: {type: GraphQLString}, 
+      },
+      resolve: function(rootValue, args, info) {
+        const token = jwt.sign({
+          email: args.email
+        }, jwtSecret);
+        return {
+          email: args.email,
+          token
+        };
+      }
+    },
     addProduct: {
       type: Product,
       args: {
