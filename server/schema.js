@@ -12,8 +12,7 @@ import {
   GraphQLNonNull
 } from 'graphql';
 import jwt from 'jsonwebtoken';
-import crypto from 'crypto';
-import {jwtSecret} from '../constants.js';
+import {jwtSecret, encrypt, decrypt} from '../constants.js';
 
 const MongoClient = require('mongodb').MongoClient
 const assert = require('assert');
@@ -32,6 +31,17 @@ MongoClient.connect(url, function(err, db) {
 
   // db.close();
 });
+
+const getTokenFromUser = function(user) {
+  if (!user) return null;
+  return jwt.sign({
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    }
+  }, jwtSecret);
+}
 
 const createUser = function({name, email, password}) {
   console.log(name, email, password);
@@ -52,7 +62,7 @@ const createUser = function({name, email, password}) {
 
 const findUser = function ({email, password}) {
   return usersCollection.findOne({email}).then((userExists) => {
-    if (userExists.password === password) {
+    if (decrypt(userExists.password) === password) {
       return userExists;
     } else {
       return null;
@@ -98,7 +108,7 @@ const Query = new GraphQLObjectType({
     products: {
       type: new GraphQLList(Product),
       resolve: function(rootValue, args, info) {
-        console.log(rootValue.user.email);
+        console.log(rootValue.user);
         let fields = {};
         let fieldASTs = info.fieldASTs;
         fieldASTs[0].selectionSet.selections.map(function(selection) {
@@ -131,14 +141,13 @@ const Mutation = new GraphQLObjectType({
         password: {type: new GraphQLNonNull(GraphQLString)}, 
       },
       resolve: function(rootValue, args, info) {
+        args.password = encrypt(args.password);
         return createUser(args).then(user => {
           console.log(user)
-          const token = user ? jwt.sign({
-            user
-          }, jwtSecret) : null;
+          delete user.password
           return {
             user,
-            token
+            token: getTokenFromUser(user)
           };
         });
       }
@@ -152,12 +161,10 @@ const Mutation = new GraphQLObjectType({
       resolve: function(rootValue, args, info) {
         return findUser(args).then(user => {
           console.log(user);
-          const token = user ? jwt.sign({
-            user
-          }, jwtSecret) : null;
+          delete user.password
           return {
             user,
-            token
+            token: getTokenFromUser(user)
           };
         });
       }
