@@ -7,7 +7,10 @@ var path = require('path');
 var http = require('http');
 var fs = require('fs');
 var webpack = require('webpack');
-var cors = require('cors')
+var cors = require('cors');
+var jwtSecret = require('./constants.js').jwtSecret;
+var jwt = require('express-jwt');
+
 
 global.__DEVELOPMENT__ = process.env.NODE_ENV !== 'production';
 
@@ -69,13 +72,17 @@ var corsOptions = {
 }
 
 server.use(cors(corsOptions));
-
-server.use('/', expressGraphql({
-  schema: Schema,
-  graphiql: true
+server.use(jwt({
+  secret: jwtSecret,
+  credentialsRequired: false,
+  userProperty: 'user',
 }));
-server.use('/graphql', expressGraphql({
-  schema: Schema,
+
+server.use('/graphql', expressGraphql((req) => {
+  return {
+    schema: Schema,
+    rootValue: req
+  }
 }));
 
 server.listen(3000);

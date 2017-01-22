@@ -70,6 +70,7 @@ const Query = new GraphQLObjectType({
     products: {
       type: new GraphQLList(Product),
       resolve: function(rootValue, args, info) {
+        console.log(rootValue.user.email);
         let fields = {};
         let fieldASTs = info.fieldASTs;
         fieldASTs[0].selectionSet.selections.map(function(selection) {
