@@ -12,7 +12,6 @@ class ProductList extends React.Component {
     const {products, fetching, removeProduct} = this.props;
     return (
       <div style={{textAlign:"center"}}>
-        <Link style={{float: "right"}} to="/login">Login</Link>
         <h1>List of Products</h1>
         {products && products.map(product => {
           return (

@@ -34,12 +34,10 @@ MongoClient.connect(url, function(err, db) {
 });
 
 const createUser = function({name, email, password}) {
+  console.log(name, email, password);
   return usersCollection.findOne({email}).then((userExists) => {
-    console.log(userExists, 'userExists');
-    return userExists;
-  }, (err) => {
+    if (userExists) return userExists;
     return usersCollection.count().then(length => {
-      console.log('length', length)
       let user = {
         name,
         email,
@@ -59,7 +57,7 @@ const findUser = function ({email, password}) {
     } else {
       return null;
     }
-  }, (err) => null);
+  });
 }
 
 const User = new GraphQLObjectType({
@@ -134,6 +132,7 @@ const Mutation = new GraphQLObjectType({
       },
       resolve: function(rootValue, args, info) {
         return createUser(args).then(user => {
+          console.log(user)
           const token = user ? jwt.sign({
             user
           }, jwtSecret) : null;

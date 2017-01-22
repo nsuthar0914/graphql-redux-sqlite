@@ -4,6 +4,7 @@ import { syncHistoryWithStore } from 'react-router-redux'  ;
 
 import App from './containers/App.jsx';
 import Login from './containers/Login.jsx';
+import Signup from './containers/Signup.jsx';
 import ProductList from './containers/ProductList.jsx';
 import ProductDetail from './containers/ProductDetail.jsx';
 import AddEditProduct from './containers/AddEditProduct.jsx';
@@ -25,6 +26,7 @@ export default function (store) {
       <Route path="product/:id" component={ProductDetail}/>
       <Route path="product/:id/edit" component={AddEditProduct}/>
       <Route path="login" component={Login} />
+      <Route path="signup" component={Signup} />
     </Route>
   )
 }

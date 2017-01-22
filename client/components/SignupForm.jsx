@@ -27,12 +27,19 @@ const renderField = ({ input, label, type, meta: { touched, error } }) => (
   </div>
 )
 
-class LoginForm extends React.Component {
+class SignupForm extends React.Component {
   render() {
-    const {handleSubmit, load, pristine, reset, submitting, fetching, login} = this.props;
+    const {handleSubmit, load, pristine, reset, submitting, fetching, signup} = this.props;
     return (
       <div style={{textAlign:"center"}}>
-        <form onSubmit={handleSubmit(login)}>
+        <form onSubmit={handleSubmit(signup)}>
+          <div>
+            <label>Name</label>
+            <div>
+              <Field name="name" component={renderField} type="text" placeholder="Name"/>
+            </div>
+          </div>
+          <br />
           <div>
             <label>Email*</label>
             <div>
@@ -43,7 +50,7 @@ class LoginForm extends React.Component {
           <div>
             <label>Password*</label>
             <div>
-              <Field name="password" component={renderField} type="text" placeholder="Password"/>
+              <Field name="password" component={renderField} type="password" placeholder="Password"/>
             </div>
           </div>
           <br />
@@ -59,6 +66,6 @@ class LoginForm extends React.Component {
 
 
 export default {test: reduxForm({
-  form: 'loginForm',
+  form: 'signupForm',
   validate
-})(LoginForm)};
+})(SignupForm)};

@@ -12,7 +12,6 @@ class ProductDetail extends React.Component {
     const {product, fetching} = this.props;
     return (
       <div style={{textAlign: "center"}}>
-        <Link style={{float: "right"}} to="/products">Home</Link>
         <h1>{product.get("name")}</h1>
         <img height="400" width="400" src={product.get("image")} />
         <p>{product.get("description")}</p>
