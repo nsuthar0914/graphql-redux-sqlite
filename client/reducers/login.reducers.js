@@ -14,6 +14,7 @@ const login = (state = immutableState, action) => {
     case "LOGIN_FINISHED":
       if (action.response.data.login && action.response.data.login.user) {
         action.response.data.login.token && localStorage.setItem('token', action.response.data.login.token);
+        localStorage.setItem('user', JSON.stringify(action.response.data.login.user));
         return state.set("fetching", false)
           .set("user", Immutable.Map(action.response.data.login.user));
       } else {
@@ -26,6 +27,7 @@ const login = (state = immutableState, action) => {
     case "SIGNUP_FINISHED":
       if (action.response.data.signup && action.response.data.signup.user) {
         action.response.data.signup.token && localStorage.setItem('token', action.response.data.signup.token);
+        localStorage.setItem('user', JSON.stringify(action.response.data.signup.user));
         return state.set("fetching", false)
           .set("user", Immutable.Map(action.response.data.signup.user));
       } else {

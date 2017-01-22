@@ -217,9 +217,14 @@ const Mutation = new GraphQLObjectType({
         quantity: {type: GraphQLInt}
       },
       resolve: function(rootValue, args) {
-        let product = Object.assign({}, args);
-        return productsCollection.update({id: product.id}, {$set: product})
-            .then(_ => product);
+        return productsCollection.findOne({id: args.id}).then(product => {
+          if (rootValue.user.user.id && rootValue.user.user.id == product.creator) {
+            return productsCollection.update({id: args.id}, {$set: args})
+              .then(_ => args);
+          } else {
+            return null;
+          }
+        })
       }
     },
     removeProduct: {
@@ -228,7 +233,13 @@ const Mutation = new GraphQLObjectType({
         id: {type: new GraphQLNonNull(GraphQLString)},
       },
       resolve: function(rootValue, {id}) {
-        return productsCollection.remove({id}).then(_ => productsCollection.find().toArray());
+        return productsCollection.findOne({id}).then(product => {
+          if (rootValue.user.user.id && rootValue.user.user.id == product.creator) {
+            return productsCollection.remove({id}).then(_ => productsCollection.find().toArray());
+          } else {
+            return null
+          }
+        })
       }
     }
   }
