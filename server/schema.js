@@ -11,10 +11,13 @@ import {
   GraphQLEnumType,
   GraphQLNonNull
 } from 'graphql';
+import jwt from 'jsonwebtoken';
+import {jwtSecret} from '../constants.js';
 
 const MongoClient = require('mongodb').MongoClient
 const assert = require('assert');
 let productsCollection;
+let usersCollections;
 
 // Standard Connection URL
 const url = process.env.MONGO_CONNECTION_STRING;
@@ -24,8 +27,28 @@ MongoClient.connect(url, function(err, db) {
   console.log("Connected correctly to mongodb server");
 
   productsCollection = db.collection('products');
+  usersCollections = db.collection('users');
 
   // db.close();
+});
+
+const TokenResponse = new GraphQLObjectType({
+  name: 'TokenResponse',
+  description: 'Represent the type of a token response',
+  fields: () => ({
+    email: {type: GraphQLString},
+    token: {type: GraphQLString},
+  })
+});
+
+const User = new GraphQLObjectType({
+  name: 'User',
+  description: 'Represent the type of a user',
+  fields: () => ({
+    id: {type: GraphQLString},
+    name: {type: GraphQLString},
+    email: {type: GraphQLString},
+  })
 });
 
 const Product = new GraphQLObjectType({
@@ -44,6 +67,21 @@ const Product = new GraphQLObjectType({
 const Query = new GraphQLObjectType({
   name: 'RootQuery',
   fields: {
+    login: {
+      type: TokenResponse,
+      args: {
+        email: {type: GraphQLString}, 
+      },
+      resolve: function(rootValue, args, info) {
+        const token = jwt.sign({
+          email: args.email
+        }, jwtSecret);
+        return {
+          email: args.email,
+          token
+        };
+      }
+    },
     products: {
       type: new GraphQLList(Product),
       resolve: function(rootValue, args, info) {
