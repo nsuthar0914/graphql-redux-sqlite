@@ -30,7 +30,7 @@ MongoClient.connect(url, function(err, db) {
       })
     });
   });
-
+  createUsers(db, function() {});
 });
 
 var createProducts = function(db, callback) {
@@ -41,3 +41,12 @@ var createProducts = function(db, callback) {
     }
   );
 };
+
+var createUsers = function(db, callback) {
+  db.createCollection("users", {strict:true},
+    function(err, results) {
+      console.log("Users Collection created.");
+      callback();
+    }
+  );
+}

@@ -12,12 +12,13 @@ import {
   GraphQLNonNull
 } from 'graphql';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import {jwtSecret} from '../constants.js';
 
 const MongoClient = require('mongodb').MongoClient
 const assert = require('assert');
 let productsCollection;
-let usersCollections;
+let usersCollection;
 
 // Standard Connection URL
 const url = process.env.MONGO_CONNECTION_STRING;
@@ -27,19 +28,39 @@ MongoClient.connect(url, function(err, db) {
   console.log("Connected correctly to mongodb server");
 
   productsCollection = db.collection('products');
-  usersCollections = db.collection('users');
+  usersCollection = db.collection('users');
 
   // db.close();
 });
 
-const TokenResponse = new GraphQLObjectType({
-  name: 'TokenResponse',
-  description: 'Represent the type of a token response',
-  fields: () => ({
-    email: {type: GraphQLString},
-    token: {type: GraphQLString},
+const createUser = function({name, email, password}) {
+  return usersCollection.findOne({email}).then((userExists) => {
+    console.log(userExists, 'userExists');
+    return userExists;
+  }, (err) => {
+    return usersCollection.count().then(length => {
+      console.log('length', length)
+      let user = {
+        name,
+        email,
+        password
+      }
+      user.id = `${length + 1}`;
+      return usersCollection.insert(user)
+        .then(_ => user);
+    })
   })
-});
+}
+
+const findUser = function ({email, password}) {
+  return usersCollection.findOne({email}).then((userExists) => {
+    if (userExists.password === password) {
+      return userExists;
+    } else {
+      return null;
+    }
+  }, (err) => null);
+}
 
 const User = new GraphQLObjectType({
   name: 'User',
@@ -48,6 +69,15 @@ const User = new GraphQLObjectType({
     id: {type: GraphQLString},
     name: {type: GraphQLString},
     email: {type: GraphQLString},
+  })
+});
+
+const TokenResponse = new GraphQLObjectType({
+  name: 'TokenResponse',
+  description: 'Represent the type of a token response',
+  fields: () => ({
+    token: {type: GraphQLString},
+    user: {type: User},
   })
 });
 
@@ -95,19 +125,42 @@ const Query = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
   name: 'Mutations',
   fields: {
+    signup: {
+      type: TokenResponse,
+      args: {
+        name: {type: GraphQLString},
+        email: {type: new GraphQLNonNull(GraphQLString)}, 
+        password: {type: new GraphQLNonNull(GraphQLString)}, 
+      },
+      resolve: function(rootValue, args, info) {
+        return createUser(args).then(user => {
+          const token = user ? jwt.sign({
+            user
+          }, jwtSecret) : null;
+          return {
+            user,
+            token
+          };
+        });
+      }
+    },
     login: {
       type: TokenResponse,
       args: {
-        email: {type: GraphQLString}, 
+        email: {type: new GraphQLNonNull(GraphQLString)}, 
+        password: {type: new GraphQLNonNull(GraphQLString)}, 
       },
       resolve: function(rootValue, args, info) {
-        const token = jwt.sign({
-          email: args.email
-        }, jwtSecret);
-        return {
-          email: args.email,
-          token
-        };
+        return findUser(args).then(user => {
+          console.log(user);
+          const token = user ? jwt.sign({
+            user
+          }, jwtSecret) : null;
+          return {
+            user,
+            token
+          };
+        });
       }
     },
     addProduct: {
