@@ -1,3 +1,5 @@
+import {apiCall} from '../utils.jsx';
+
 const getProductsRequest = () => {
   return {
     type: "GET_PRODUCTS_REQUEST"
@@ -12,24 +14,7 @@ const getProductsFinished = (response) => {
 export const getProducts = (payload) => {
   return dispatch => {
     dispatch(getProductsRequest());
-    return new Promise(function(resolve, reject) {
-      let request=new XMLHttpRequest();
-      request.open("POST", "http://localhost:3000/graphql", true);
-      request.setRequestHeader("Content-Type",
-                               "application/graphql");
-      let token = localStorage.getItem('token')
-      if (token) {
-        console.log(token);
-        request.setRequestHeader("Authorization", `Bearer ${token}`)
-        console.log(request);
-      }
-      request.send(payload);
-      request.onreadystatechange = () => {
-        if (request.readyState === 4) {
-          resolve(request.responseText)
-        }
-      }
-    }).then(response =>
+    return apiCall(payload).then(response =>
             dispatch(getProductsFinished(JSON.parse(response))))
   }
 }
@@ -49,18 +34,7 @@ const getProductFinished = (response) => {
 export const getProduct = (payload) => {
   return dispatch => {
     dispatch(getProductRequest());
-    return new Promise(function(resolve, reject) {
-      let request=new XMLHttpRequest();
-      request.open("POST", "http://localhost:3000/graphql", true);
-      request.setRequestHeader("Content-Type",
-                               "application/graphql");
-      request.send(payload);
-      request.onreadystatechange = () => {
-        if (request.readyState === 4) {
-          resolve(request.responseText)
-        }
-      }
-    }).then(response =>
+    return apiCall(payload).then(response =>
             dispatch(getProductFinished(JSON.parse(response))))
   }
 }
@@ -79,18 +53,7 @@ const addProductFinished = (response) => {
 export const addProduct = (payload) => {
   return dispatch => {
     dispatch(addProductRequest());
-    return new Promise(function(resolve, reject) {
-      let request=new XMLHttpRequest();
-      request.open("POST", "http://localhost:3000/graphql", true);
-      request.setRequestHeader("Content-Type",
-                               "application/graphql");
-      request.send(payload);
-      request.onreadystatechange = () => {
-        if (request.readyState === 4) {
-          resolve(request.responseText)
-        }
-      }
-    }).then(response =>
+    return apiCall(payload).then(response =>
             dispatch(addProductFinished(JSON.parse(response))))
   }
 }
@@ -109,18 +72,7 @@ const editProductFinished = (response) => {
 export const editProduct = (payload) => {
   return dispatch => {
     dispatch(editProductRequest());
-    return new Promise(function(resolve, reject) {
-      let request=new XMLHttpRequest();
-      request.open("POST", "http://localhost:3000/graphql", true);
-      request.setRequestHeader("Content-Type",
-                               "application/graphql");
-      request.send(payload);
-      request.onreadystatechange = () => {
-        if (request.readyState === 4) {
-          resolve(request.responseText)
-        }
-      }
-    }).then(response =>
+    return apiCall(payload).then(response =>
             dispatch(editProductFinished(JSON.parse(response))))
   }
 }
@@ -139,18 +91,7 @@ const removeProductFinished = (response) => {
 export const removeProduct = (payload) => {
   return dispatch => {
     dispatch(removeProductRequest());
-    return new Promise(function(resolve, reject) {
-      let request=new XMLHttpRequest();
-      request.open("POST", "http://localhost:3000/graphql", true);
-      request.setRequestHeader("Content-Type",
-                               "application/graphql");
-      request.send(payload);
-      request.onreadystatechange = () => {
-        if (request.readyState === 4) {
-          resolve(request.responseText)
-        }
-      }
-    }).then(response =>
+    return apiCall(payload).then(response =>
             dispatch(removeProductFinished(JSON.parse(response))))
   }
 }

@@ -29,9 +29,11 @@ const renderField = ({ input, label, type, meta: { touched, error } }) => (
 
 class LoginForm extends React.Component {
   render() {
-    const {handleSubmit, load, pristine, reset, submitting, fetching, login} = this.props;
+    const {handleSubmit, load, pristine, reset, submitting, fetching, login, stateError} = this.props;
+    console.log(stateError);
     return (
       <div style={{textAlign:"center"}}>
+        {stateError && <small>{stateError}</small>}
         <form onSubmit={handleSubmit(login)}>
           <div>
             <label>Email*</label>
@@ -43,7 +45,7 @@ class LoginForm extends React.Component {
           <div>
             <label>Password*</label>
             <div>
-              <Field name="password" component={renderField} type="text" placeholder="Password"/>
+              <Field name="password" component={renderField} type="password" placeholder="Password"/>
             </div>
           </div>
           <br />

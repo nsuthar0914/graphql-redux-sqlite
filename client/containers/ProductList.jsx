@@ -6,14 +6,15 @@ import {Link, browserHistory} from 'react-router';
 class ProductList extends React.Component {
   componentWillMount() {
     const {getProducts} = this.props;
-    getProducts("{products{id, name}}")
+    getProducts("{products{id, name, creator{id}}}")
   }
   render() {
-    const {products, fetching, removeProduct} = this.props;
+    const {products, fetching, removeProduct, user} = this.props;
     return (
       <div style={{textAlign:"center"}}>
         <h1>List of Products</h1>
         {products && products.map(product => {
+          console.log(product)
           return (
             <div style={{width: "300px", margin: "0 auto"}} key={product.id}>
               <div style={{width: "150px", display:"inline-block", textAlign: "left"}}>
@@ -22,12 +23,12 @@ class ProductList extends React.Component {
                 </Link>
               </div>
               <div style={{width: "150px", display:"inline-block", textAlign: "right"}}>
-                <button onClick={() => browserHistory.push(`/product/${product.id}/edit`)}>
+                <button disabled={!product.creator || product.creator.id != user.get("id")} onClick={() => browserHistory.push(`/product/${product.id}/edit`)}>
                   Edit
                 </button>
                 &nbsp;
                 &nbsp;
-                <button onClick={() => removeProduct(`mutation{removeProduct(id:"${product.id}"){id, name}}`)}>
+                <button disabled={!product.creator || product.creator.id != user.get("id")} onClick={() => removeProduct(`mutation{removeProduct(id:"${product.id}"){id, name}}`)}>
                   Delete
                 </button>
               </div>
@@ -35,9 +36,13 @@ class ProductList extends React.Component {
           );
         })}
         <br />
-        <Link to="product/new">
-          Add New Product
-        </Link>
+        {user && user.get("email")
+          ? <Link to="product/new">
+            Add New Product
+          </Link>
+          : <Link to="login">
+            Login to start adding products
+          </Link>}
       </div>
     )
   }
@@ -47,6 +52,7 @@ const mapStateToProps = (state) => {
   return {
     products: state.products.get("products"),
     fetching: state.products.get("fetching"),
+    user: state.login.get("user")
   }
 };
 

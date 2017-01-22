@@ -14,7 +14,7 @@ class App extends React.Component {
         <div style={{textAlign: "center"}}>
 
         {user && user.get("email")
-          ? <div style={{float: "right", width:"200px", display:"inline-block"}}>
+          ? <div style={{float: "right", width:"300px", display:"inline-block"}}>
             {(location.pathname != '/' && location.pathname != '/products') && <Link to="/">Home</Link>} &nbsp;&nbsp;
             Hello, {user.get("name") || user.get("email")} &nbsp;&nbsp;
             <button onClick={logout}>Logout</button>

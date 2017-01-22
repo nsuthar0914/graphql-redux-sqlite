@@ -12,17 +12,21 @@ class Signup extends React.Component {
     console.log(user);
     let dataStr = `email: "${user.email}", password: "${user.password}"`;
     if (user.name) dataStr += `, name: "${user.name}"`
-    signup(`mutation{signup(${dataStr}){user{id, name, email}, token}}`).then(() => {
-      browserHistory.push('/products');
-    }, (error) => console.log(error));
+    signup(`mutation{signup(${dataStr}){user{id, name, email}, token}}`).then((data) => {
+      if (!data.response.errors) {
+        browserHistory.push('/products');
+      } else {
+        console.log(data.response.errors)
+      }
+    });
   }
   render() {
-    const {} = this.props;
+    const {error} = this.props;
 
     return (
       <div>
         <div style={{width: "300px", margin: "0 auto"}}>
-          <SignupForm.test signup={(user) => this.signup(user)} initialValues={{
+          <SignupForm.test stateError={error} signup={(user) => this.signup(user)} initialValues={{
             name: "",
             email: "",
             password: ""
@@ -34,7 +38,9 @@ class Signup extends React.Component {
 }
 export default connect(
   (state) => {
-    return {};
+    return {
+      error: state.login.get("error")
+    };
   },
   (dispatch) => {
     return {

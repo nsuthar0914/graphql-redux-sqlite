@@ -79,10 +79,10 @@ server.use(jwt({
 }));
 
 server.use('/graphql', expressGraphql((req) => {
+  // console.log(req)
   return {
     schema: Schema,
     rootValue: req,
-    graphiql: true,
   }
 }));
 

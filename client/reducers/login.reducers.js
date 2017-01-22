@@ -3,17 +3,17 @@ import Immutable from "immutable";
 const immutableState = Immutable.Map({
   fetching: false,
   user: localStorage.getItem('user') ? Immutable.Map(JSON.parse(localStorage.getItem('user'))) : Immutable.Map({}),
-  error: ""
+  error: null
 })
 
 const login = (state = immutableState, action) => {
   switch (action.type) {
     case "LOGIN_REQUEST":
-      return state.set("fetching", true);
+      return state.set("fetching", true)
+        .set("error", null);
     case "LOGIN_FINISHED":
-      action.response.data.login.token && localStorage.setItem('token', action.response.data.login.token);
-      action.response.data.login.user && localStorage.setItem('user', JSON.stringify(action.response.data.login.user));
-      if (action.response.data.login.user) {
+      if (action.response.data.login && action.response.data.login.user) {
+        action.response.data.login.token && localStorage.setItem('token', action.response.data.login.token);
         return state.set("fetching", false)
           .set("user", Immutable.Map(action.response.data.login.user));
       } else {
@@ -21,11 +21,11 @@ const login = (state = immutableState, action) => {
           .set("error", "Invalid Credentials");
       }
     case "SIGNUP_REQUEST":
-      return state.set("fetching", true);
+      return state.set("fetching", true)
+        .set("error", null);
     case "SIGNUP_FINISHED":
-      action.response.data.signup.token && localStorage.setItem('token', action.response.data.signup.token);
-      action.response.data.signup.user && localStorage.setItem('user', JSON.stringify(action.response.data.signup.user));
-      if (action.response.data.signup.user) {
+      if (action.response.data.signup && action.response.data.signup.user) {
+        action.response.data.signup.token && localStorage.setItem('token', action.response.data.signup.token);
         return state.set("fetching", false)
           .set("user", Immutable.Map(action.response.data.signup.user));
       } else {

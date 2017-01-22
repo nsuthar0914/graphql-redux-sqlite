@@ -60,13 +60,20 @@ const createUser = function({name, email, password}) {
   })
 }
 
-const findUser = function ({email, password}) {
+const findUserByEmail = function ({email, password}) {
   return usersCollection.findOne({email}).then((userExists) => {
+    if (!userExists) return null;
     if (decrypt(userExists.password) === password) {
       return userExists;
     } else {
       return null;
     }
+  });
+}
+
+const findUserById = function ({id}) {
+  return usersCollection.findOne({id}).then((userExists) => {
+    return userExists;
   });
 }
 
@@ -98,7 +105,13 @@ const Product = new GraphQLObjectType({
     description: {type: GraphQLString},
     cost: {type: GraphQLInt},
     quantity: {type: GraphQLInt},
-    image: {type: GraphQLString}
+    image: {type: GraphQLString},
+    creator: {
+      type: User,
+      resolve: function(obj, args) {
+        return findUserById({id: obj.creator});
+      }
+    }
   })
 });
 
@@ -108,7 +121,7 @@ const Query = new GraphQLObjectType({
     products: {
       type: new GraphQLList(Product),
       resolve: function(rootValue, args, info) {
-        console.log(rootValue.user);
+        // console.log(rootValue.user);
         let fields = {};
         let fieldASTs = info.fieldASTs;
         fieldASTs[0].selectionSet.selections.map(function(selection) {
@@ -159,7 +172,7 @@ const Mutation = new GraphQLObjectType({
         password: {type: new GraphQLNonNull(GraphQLString)}, 
       },
       resolve: function(rootValue, args, info) {
-        return findUser(args).then(user => {
+        return findUserByEmail(args).then(user => {
           console.log(user);
           delete user.password
           return {
@@ -178,14 +191,19 @@ const Mutation = new GraphQLObjectType({
         cost: {type: GraphQLInt},
         quantity: {type: GraphQLInt}
       },
-      resolve: function(rootValue, args) {
+      resolve: function(rootValue, args, info, request) {
         let product = Object.assign({}, args);
-        return productsCollection.count().then(length => {
-          console.log('length', length)
-          product.id = `${length + 1}`;
-          return productsCollection.insert(product)
-            .then(_ => product);
-        })
+        if (rootValue.user.user.id) {
+          return productsCollection.count().then(length => {
+            console.log('length', length)
+            product.id = `${length + 1}`;
+            product.creator = rootValue.user.user.id;
+            return productsCollection.insert(product)
+              .then(_ => product);
+          })
+        } else {
+          return null;
+        }
       }
     },
     editProduct: {

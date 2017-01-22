@@ -51,7 +51,6 @@ class AddEditProduct extends React.Component {
     }
     return (
       <div>
-        <Link style={{float: "right"}} to="/products">Home</Link>
         <AddEditProductForm.test addOrEdit={(data) => this.addOrEdit(data)} initialValues={initialValues}/>
       </div>
     )

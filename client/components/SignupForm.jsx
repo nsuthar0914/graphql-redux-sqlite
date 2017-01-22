@@ -29,9 +29,10 @@ const renderField = ({ input, label, type, meta: { touched, error } }) => (
 
 class SignupForm extends React.Component {
   render() {
-    const {handleSubmit, load, pristine, reset, submitting, fetching, signup} = this.props;
+    const {handleSubmit, load, pristine, reset, submitting, fetching, signup, stateError} = this.props;
     return (
       <div style={{textAlign:"center"}}>
+        {stateError && <small>{stateError}</small>}
         <form onSubmit={handleSubmit(signup)}>
           <div>
             <label>Name</label>
