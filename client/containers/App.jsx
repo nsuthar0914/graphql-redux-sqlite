@@ -8,7 +8,6 @@ class App extends React.Component {
 
   render() {
     const {user, logout, location} = this.props;
-    console.log(user.get("email"));
     return (
       <section id="app">
         <div style={{textAlign: "center"}}>

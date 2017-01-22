@@ -11,9 +11,7 @@ export function apiCall(payload) {
                              "application/graphql");
     let token = localStorage.getItem('token')
     if (token) {
-      console.log(token);
       request.setRequestHeader("Authorization", `Bearer ${token}`)
-      console.log(request);
     }
     request.send(payload);
     request.onreadystatechange = () => {

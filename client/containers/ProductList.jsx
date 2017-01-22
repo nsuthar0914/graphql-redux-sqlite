@@ -14,7 +14,6 @@ class ProductList extends React.Component {
       <div style={{textAlign:"center"}}>
         <h1>List of Products</h1>
         {products && products.map(product => {
-          console.log(product)
           return (
             <div style={{width: "300px", margin: "0 auto"}} key={product.id}>
               <div style={{width: "150px", display:"inline-block", textAlign: "left"}}>
