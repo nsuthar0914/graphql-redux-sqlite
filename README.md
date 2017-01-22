@@ -1,4 +1,4 @@
-## A GraphQL Server using MongoDB with a React+Redux Client
+## A GraphQL Server using MongoDB and JWT authentication with a React+Redux Client
 
 Install mongodb --- https://www.howtoforge.com/tutorial/install-mongodb-on-ubuntu-16.04/
 then -- 
@@ -18,4 +18,5 @@ npm run seed
 npm start
 
 ```
-##server runs at localhost:3000 and client runs at localhost:4000
+##server runs at localhost:3000/graphql (graphiql suspended to enable passing request into context) 
+##client runs at localhost:4000
