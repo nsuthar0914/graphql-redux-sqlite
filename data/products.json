@@ -1,13 +1,13 @@
 [
   {
-    "id": "1",
+    "id": 1,
     "name": "Towel",
     "cost": 50,
     "description": "Handy tool to wipe your face",
     "quantity": 500,
     "image": "http://www.ikea.com/PIAimages/0104142_PE250908_S5.JPG"
   },{
-    "id": "2",
+    "id": 2,
     "name": "Toothbrush",
     "cost": 10,
     "description": "Handy tool to clean your teeth",

@@ -1,5 +1,5 @@
 import * as _ from 'underscore';
-
+import { User as UserModel, Product as ProductModel } from './database.js';
 import {
   GraphQLList,
   GraphQLObjectType,
@@ -14,24 +14,6 @@ import {
 import jwt from 'jsonwebtoken';
 import {jwtSecret, encrypt, decrypt} from '../constants.js';
 
-const MongoClient = require('mongodb').MongoClient
-const assert = require('assert');
-let productsCollection;
-let usersCollection;
-
-// Standard Connection URL
-const url = process.env.MONGO_CONNECTION_STRING;
-// Use connect method to connect to the Server
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected correctly to mongodb server");
-
-  productsCollection = db.collection('products');
-  usersCollection = db.collection('users');
-
-  // db.close();
-});
-
 const getTokenFromUser = function(user) {
   if (!user) return null;
   return jwt.sign({
@@ -45,23 +27,23 @@ const getTokenFromUser = function(user) {
 
 const createUser = function({name, email, password}) {
   console.log(name, email, password);
-  return usersCollection.findOne({email}).then((userExists) => {
+  return UserModel.findOne({ where: {email} }).then((userExists) => {
     if (userExists) return userExists;
-    return usersCollection.count().then(length => {
+    return UserModel.count().then(length => {
       let user = {
         name,
         email,
         password
       }
       user.id = `${length + 1}`;
-      return usersCollection.insert(user)
+      return UserModel.findOrCreate({where: user})
         .then(_ => user);
     })
   })
 }
 
 const findUserByEmail = function ({email, password}) {
-  return usersCollection.findOne({email}).then((userExists) => {
+  return UserModel.findOne({ where: {email} }).then((userExists) => {
     if (!userExists) return null;
     if (decrypt(userExists.password) === password) {
       return userExists;
@@ -72,7 +54,7 @@ const findUserByEmail = function ({email, password}) {
 }
 
 const findUserById = function ({id}) {
-  return usersCollection.findOne({id}).then((userExists) => {
+  return UserModel.findOne({ where: {id} }).then((userExists) => {
     return userExists;
   });
 }
@@ -122,12 +104,12 @@ const Query = new GraphQLObjectType({
       type: new GraphQLList(Product),
       resolve: function(rootValue, args, info) {
         // console.log(rootValue.user);
-        let fields = {};
+        let fields = [];
         let fieldASTs = info.fieldASTs;
         fieldASTs[0].selectionSet.selections.map(function(selection) {
-          fields[selection.name.value] = 1;
+          fields.push(selection.name.value);
         });
-        return productsCollection.find({}, fields).toArray();
+        return ProductModel.findAll();
       }
     },
     product: {
@@ -137,7 +119,7 @@ const Query = new GraphQLObjectType({
       },
       resolve: function(rootValue, {id}) {
         console.log(id, 'product')
-        return productsCollection.findOne({id});
+        return ProductModel.findOne({ where: {id} });
       }
     },
   }
@@ -194,11 +176,11 @@ const Mutation = new GraphQLObjectType({
       resolve: function(rootValue, args, info, request) {
         let product = Object.assign({}, args);
         if (rootValue.user.user.id) {
-          return productsCollection.count().then(length => {
+          return ProductModel.count().then(length => {
             console.log('length', length)
             product.id = `${length + 1}`;
             product.creator = rootValue.user.user.id;
-            return productsCollection.insert(product)
+            return ProductModel.findOrCreate({where: product})
               .then(_ => product);
           })
         } else {
@@ -217,9 +199,9 @@ const Mutation = new GraphQLObjectType({
         quantity: {type: GraphQLInt}
       },
       resolve: function(rootValue, args) {
-        return productsCollection.findOne({id: args.id}).then(product => {
+        return ProductModel.findOne({ where: {id: args.id} }).then(product => {
           if (rootValue.user.user.id && rootValue.user.user.id == product.creator) {
-            return productsCollection.update({id: args.id}, {$set: args})
+            return ProductModel.update(args, {where: {id: args.id}})
               .then(_ => args);
           } else {
             return null;
@@ -233,9 +215,9 @@ const Mutation = new GraphQLObjectType({
         id: {type: new GraphQLNonNull(GraphQLString)},
       },
       resolve: function(rootValue, {id}) {
-        return productsCollection.findOne({id}).then(product => {
+        return ProductModel.findOne({ where: {id} }).then(product => {
           if (rootValue.user.user.id && rootValue.user.user.id == product.creator) {
-            return productsCollection.remove({id}).then(_ => productsCollection.find().toArray());
+            return ProductModel.destroy({where: {id}}).then(_ => ProductModel.find().toArray());
           } else {
             return null
           }
